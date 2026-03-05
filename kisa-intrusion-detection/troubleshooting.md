@@ -6,7 +6,7 @@
 
 **Root Cause**: The same ROI judgment logic was applied to all ROI shapes. A thin strip ROI can never contain a full person bounding box.
 
-**Solution**: Implemented automatic ROI mode detection based on polygon thickness relative to person width. Strip-mode ROIs use crossing detection (foot-point transitions from outside to inside) instead of full-body containment.
+**Solution**: Implemented automatic ROI mode detection based on polygon thickness relative to person width. Strip-mode ROIs use crossing detection (foot-point transitions from outside to inside) instead of full-body containment. See [algorithm-design.md](./algorithm-design.md#roi-mode-auto-detection) for details.
 
 ```
 Area ROI:                    Strip ROI:
@@ -38,13 +38,15 @@ Area ROI:                    Strip ROI:
 2. Use streak counters (`foot_in_streak`, `full_out_streak`) to require N consecutive frames before state changes
 3. Implement hysteresis: once "inside", require a stronger signal to transition to "outside"
 
+Related: [parameter-tuning.md](./parameter-tuning.md#1-inside-ratio-threshold) documents the inside ratio threshold change (0.98 → 0.85).
+
 ## Issue 4: Ultra-Thin ROI Over-Sensitivity
 
 **Problem**: Very thin ROIs (< 100px thick) generated events too quickly because even brief pass-throughs were counted as intrusions.
 
 **Root Cause**: Strip-mode confirmation delay was 0.0s, meaning any single crossing triggered an event immediately.
 
-**Solution**: Added a separate "ultra-thin" mode with a 6.0s confirmation delay. This allows normal foot traffic to pass through thin zones without triggering false positives.
+**Solution**: Added a separate "ultra-thin" mode with a 6.0s confirmation delay. This allows normal foot traffic to pass through thin zones without triggering false positives. See [algorithm-design.md](./algorithm-design.md#confirmation-delay) for the full delay table.
 
 ## Issue 5: Event Timing for Distant Persons
 
@@ -52,7 +54,7 @@ Area ROI:                    Strip ROI:
 
 **Root Cause**: The minimum bounding box height filter (`min_box_h_ratio = 0.04`) rejected detections where the person was less than 4% of the frame height.
 
-**Solution**: Lowered `min_box_h_ratio` to 0.025. YOLO's confidence threshold provides sufficient filtering — the height filter was an unnecessary additional constraint.
+**Solution**: Lowered `min_box_h_ratio` to 0.025. YOLO's confidence threshold provides sufficient filtering — the height filter was an unnecessary additional constraint. See [parameter-tuning.md](./parameter-tuning.md#4-minimum-box-height-ratio).
 
 ## Issue 6: Multi-Person Event Conflicts
 
@@ -60,7 +62,7 @@ Area ROI:                    Strip ROI:
 
 **Root Cause**: The event selection logic picked the longest-duration event, but KISA evaluates based on the last intrusion timestamp.
 
-**Solution**: Changed event selection to pick the event with the maximum `raw_start` time (most recent intrusion). This aligned with KISA's evaluation criteria.
+**Solution**: Changed event selection to pick the event with the maximum `raw_start` time (most recent intrusion). This aligned with KISA's evaluation criteria. See [parameter-tuning.md](./parameter-tuning.md#6-event-selection-logic).
 
 ## Issue 7: Config File Conflict During Batch Evaluation
 

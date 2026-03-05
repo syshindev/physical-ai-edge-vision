@@ -60,7 +60,7 @@ Using area-mode logic on a thin strip ROI caused systematic failures: the "fully
 ROI thickness < person_width × 2.5  →  Strip mode (crossing detection)
 ROI thickness ≥ person_width × 2.5  →  Area mode (entry detection)
 ```
-Each mode has dedicated logic, thresholds, and confirmation requirements.
+Each mode has dedicated logic, thresholds, and confirmation requirements. See [algorithm-design.md](./algorithm-design.md#roi-mode-auto-detection) for the full design.
 
 ### 4. No Event Lifecycle Management
 
@@ -93,6 +93,8 @@ Additional mechanisms:
 - **Hold period**: Keep event alive during brief tracking gaps
 - **Event merging**: Merge events with < 10s gap (same intrusion, split by tracking loss)
 - **KISA time correction**: Separate pre/post offsets for area and strip modes
+
+See [algorithm-design.md](./algorithm-design.md#event-lifecycle) for the full state machine design.
 
 ### 5. Manual Preprocessing Overhead
 

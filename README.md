@@ -5,10 +5,12 @@ Real-time video surveillance event detection system built during an internship a
 ## Projects
 ### [Intrusion Detection System](./kisa-intrusion-detection/)
 Real-time intrusion detection for KISA video surveillance evaluation. Designed the core detection algorithm including ROI analysis, track-based state management, and event lifecycle logic. Built an end-to-end evaluation framework and improved the system score from **80 to 90+** through systematic parameter tuning.
+
 **Key Work**: Algorithm design, parameter tuning, YOLO finetuning experiment, batch evaluation framework
 
 ### [Arson Detection System](./kisa-arson-detection/)
 Fire/smoke detection system for KISA arson evaluation. Migrated the detection model from RT-DETR to D-FINE Nano, built the complete training pipeline (dataset conversion, server training, troubleshooting), and integrated the new model into the production system.
+
 **Key Work**: Model migration (RT-DETR → D-FINE), training pipeline, CUDA/config troubleshooting
 
 ## Key Achievements

@@ -74,6 +74,8 @@ The metrics looked excellent — high precision and recall on the validation set
 
 ![Finetuning Training Curves](./images/finetuning-results.png)
 
+![Confusion Matrix](./images/confusion-matrix.png)
+
 ## Evaluation Results
 
 ### Finetuned Model

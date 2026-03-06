@@ -79,3 +79,4 @@ The system processes live video feeds to detect persons collapsing or falling wi
 
 - [Legacy Analysis](./legacy-analysis.md) — Inherited code problems and redesign decisions
 - [Algorithm Design](./algorithm-design.md) — 3-state machine, EMA scoring, night mode, evidence system
+- [Troubleshooting](./troubleshooting.md) — Problems encountered and solutions

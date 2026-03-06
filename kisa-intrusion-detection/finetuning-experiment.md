@@ -72,6 +72,8 @@ Split ratio: 85% train / 15% validation (seed=42).
 
 The metrics looked excellent — high precision and recall on the validation set.
 
+![Finetuning Training Curves](./images/finetuning-results.png)
+
 ## Evaluation Results
 
 ### Finetuned Model

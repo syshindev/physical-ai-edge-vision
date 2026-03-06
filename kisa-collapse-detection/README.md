@@ -51,8 +51,8 @@ The system processes live video feeds to detect persons collapsing or falling wi
 
 - **Legacy Code Redesign**: Analyzed the inherited codebase (720 lines, 3 classes), identified 6 fundamental limitations, and rebuilt into a production-grade system (1,624 lines). See [legacy-analysis.md](./legacy-analysis.md).
 - **Algorithm Design**: Designed the 3-state machine with EMA scoring, multi-evidence verification, and bidirectional state transitions. See [algorithm-design.md](./algorithm-design.md).
-- **Night Mode Pipeline**: Built a 5-stage adaptive system for nighttime footage (brightness enhancement, dynamic confidence/threshold/resolution adjustment).
-- **Tracking Recovery**: Implemented ID stitching, fallback detection, and keepalive mechanisms to maintain detection continuity through occlusions.
+- **Night Mode Pipeline**: Built a 5-stage adaptive system for nighttime footage (brightness enhancement, dynamic confidence/threshold/resolution adjustment). See [algorithm-design.md](./algorithm-design.md#night-mode-pipeline).
+- **Tracking Recovery**: Implemented ID stitching, fallback detection, and keepalive mechanisms to maintain detection continuity through occlusions. See [algorithm-design.md](./algorithm-design.md#tracking-recovery).
 
 ## Results
 

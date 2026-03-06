@@ -44,11 +44,11 @@ The system processes live video feeds to detect unauthorized persons entering re
 ## My Role
 
 - **Legacy Code Redesign**: Analyzed the inherited codebase, identified 6 fundamental architectural limitations, and rebuilt the detection pipeline from scratch. See [legacy-analysis.md](./legacy-analysis.md).
-- **Algorithm Design**: Designed the complete intrusion detection pipeline including ROI mode auto-detection, track state management, and event lifecycle logic
-- **Parameter Tuning**: Systematically tuned 6+ parameters to improve score from 80 to 90+ on the national evaluation
-- **Data Pipeline**: Built frame extraction, auto-labeling, and dataset preparation tools for YOLO finetuning
+- **Algorithm Design**: Designed the complete intrusion detection pipeline including ROI mode auto-detection, track state management, and event lifecycle logic. See [algorithm-design.md](./algorithm-design.md).
+- **Parameter Tuning**: Systematically tuned 6+ parameters to improve score from 80 to 90+ on the national evaluation. See [parameter-tuning.md](./parameter-tuning.md).
+- **Data Pipeline**: Built frame extraction, auto-labeling, and dataset preparation tools for YOLO finetuning. See [finetuning-experiment.md](./finetuning-experiment.md).
 - **Evaluation Framework**: Created a batch evaluation script that runs all 30 test videos, compares against ground truth, and produces pass/fail reports
-- **Troubleshooting**: Diagnosed and fixed issues with thin ROI handling, boundary detection, and event timing
+- **Troubleshooting**: Diagnosed and fixed issues with thin ROI handling, boundary detection, and event timing. See [troubleshooting.md](./troubleshooting.md).
 
 ## Results
 
@@ -66,7 +66,7 @@ The system processes live video feeds to detect unauthorized persons entering re
 
 2. **Adaptive ROI modes**: Auto-detects "area" vs "strip" ROI shapes and applies different confirmation delays and thresholds. See [algorithm-design.md](./algorithm-design.md).
 
-3. **Last-event selection**: Changed from "longest event" to "last event" selection to match KISA evaluation criteria.
+3. **Last-event selection**: Changed from "longest event" to "last event" selection to match KISA evaluation criteria. See [parameter-tuning.md](./parameter-tuning.md#6-event-selection-logic).
 
 ## Documentation
 

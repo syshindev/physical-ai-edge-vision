@@ -13,7 +13,7 @@ The system processes live video feeds to detect unauthorized persons entering re
        │
        ▼
 ┌──────────────┐
-│  YOLO 11x    │  Object detection (person class, conf=0.25)
+│  YOLO11x     │  Object detection (person class, conf=0.25)
 │  imgsz=960   │
 └──────┬───────┘
        │  Bounding boxes + confidence
@@ -47,7 +47,7 @@ The system processes live video feeds to detect unauthorized persons entering re
 - **Algorithm Design**: Designed the complete intrusion detection pipeline including ROI mode auto-detection, track state management, and event lifecycle logic. See [algorithm-design.md](./algorithm-design.md).
 - **Parameter Tuning**: Systematically tuned 6+ parameters to improve score from 80 to 90+ on the national evaluation. See [parameter-tuning.md](./parameter-tuning.md).
 - **Data Pipeline**: Built frame extraction, auto-labeling, and dataset preparation tools for YOLO finetuning. See [finetuning-experiment.md](./finetuning-experiment.md).
-- **Evaluation Framework**: Created a batch evaluation script that runs all 30 test videos, compares against ground truth, and produces pass/fail reports
+- **Evaluation Framework**: Created a batch evaluation script that runs all 30 test videos, compares against ground truth, and produces pass/fail reports. See [`batch_eval.py`](./scripts/batch_eval.py).
 - **Troubleshooting**: Diagnosed and fixed issues with thin ROI handling, boundary detection, and event timing. See [troubleshooting.md](./troubleshooting.md).
 
 ## Results
@@ -66,7 +66,11 @@ The system processes live video feeds to detect unauthorized persons entering re
 
 2. **Adaptive ROI modes**: Auto-detects "area" vs "strip" ROI shapes and applies different confirmation delays and thresholds. See [algorithm-design.md](./algorithm-design.md).
 
-3. **Last-event selection**: Changed from "longest event" to "last event" selection to match KISA evaluation criteria. See [parameter-tuning.md](./parameter-tuning.md#6-event-selection-logic).
+3. **Event merge + last-event selection**: Events with gaps < 10s are merged (handles detection flicker), then the last merged event is selected. Changed from "longest event" to match KISA's "last intrusion" criteria.
+
+4. **Strip mode reference point**: Changed foot-point from toe (bbox bottom) to lower-body (bbox bottom 20% up) to better match how KISA annotators mark the crossing moment. See [parameter-tuning.md](./parameter-tuning.md#7-strip-mode-reference-point).
+
+5. **NoEvent false-positive prevention**: Raised minimum streak thresholds (FORCE-CONFIRM: 1→10, SOFT-CONFIRM: 3→10) to prevent finalize logic from generating false events on empty videos. See [troubleshooting.md](./troubleshooting.md#issue-8-noevent-false-positives-from-finalize-logic).
 
 ## Documentation
 

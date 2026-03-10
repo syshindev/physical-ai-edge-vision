@@ -6,7 +6,7 @@
 
 **Root Cause**: The same ROI judgment logic was applied to all ROI shapes. A thin strip ROI can never contain a full person bounding box.
 
-**Solution**: Implemented automatic ROI mode detection based on polygon thickness relative to person width. Strip-mode ROIs use crossing detection (foot-point transitions from outside to inside) instead of full-body containment. See [algorithm-design.md](./algorithm-design.md#roi-mode-auto-detection) for details.
+**Solution**: Implemented automatic ROI mode detection based on polygon thickness relative to person width. Strip-mode ROIs use crossing detection (foot-point transitions from outside to inside) instead of full-body containment. See [algorithm-design.md](./algorithm-design.md#roi-mode-auto-detection) and [parameter-tuning.md](./parameter-tuning.md#3-confirmation-delay-area-roi) for details.
 
 ```
 Area ROI:                    Strip ROI:
@@ -25,7 +25,7 @@ Area ROI:                    Strip ROI:
 
 **Root Cause**: FP16 precision loss in YOLO11x. The model's detection confidence drops below threshold for borderline detections when using half precision.
 
-**Solution**: Removed `half=True`. YOLO11x must run in FP32 mode. The small performance gain wasn't worth the detection degradation.
+**Solution**: Removed `half=True`. YOLO11x must run in FP32 mode. The small performance gain wasn't worth the detection degradation. See [parameter-tuning.md](./parameter-tuning.md#step-4-fp16-inference-attempt).
 
 ## Issue 3: Boundary Detection Jitter
 
@@ -62,7 +62,7 @@ Related: [parameter-tuning.md](./parameter-tuning.md#1-inside-ratio-threshold) d
 
 **Root Cause**: The event selection logic picked the longest-duration event, but KISA evaluates based on the last intrusion timestamp.
 
-**Solution**: Changed event selection to pick the event with the maximum `raw_start` time (most recent intrusion). This aligned with KISA's evaluation criteria. See [parameter-tuning.md](./parameter-tuning.md#6-event-selection-logic).
+**Solution**: Changed event selection to pick the event with the maximum `raw_start` time (most recent intrusion). This aligned with KISA's evaluation criteria. See [parameter-tuning.md](./parameter-tuning.md#6-event-merge--selection-logic).
 
 ## Issue 7: Config File Conflict During Batch Evaluation
 
@@ -71,3 +71,15 @@ Related: [parameter-tuning.md](./parameter-tuning.md#1-inside-ratio-threshold) d
 **Root Cause**: Both arson and intrusion modules read from the same `config/config.xml` file.
 
 **Solution**: Added a workflow rule: always restore the intrusion video list in `config.xml` after arson testing. Documented this in the team's operational procedures.
+
+## Issue 8: NoEvent False Positives from Finalize Logic
+
+**Problem**: Videos with no actual intrusion were generating false positive events. The finalize logic (which runs at video end) was producing events from minimal evidence — a person briefly near the ROI boundary was enough.
+
+**Root Cause**: The FORCE-CONFIRM and SOFT-CONFIRM fallback paths in the finalize logic had very low streak thresholds (1 frame and 3 frames respectively). These paths exist to catch intrusions that weren't confirmed during normal processing, but the low thresholds meant even noise-level detections could be promoted to events on empty videos.
+
+**Solution**: Raised the minimum streak thresholds:
+- FORCE-CONFIRM: `1 → 10` frames
+- SOFT-CONFIRM: `3 → 10` frames
+
+This ensures finalize only produces events when there is substantial evidence (10+ consecutive frames of ROI presence), preventing false events on empty videos while still catching genuine intrusions that were missed by normal processing.

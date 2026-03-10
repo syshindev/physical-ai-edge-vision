@@ -64,13 +64,14 @@ Some KISA test videos have cameras mounted high or aimed at distant areas. Perso
 
 The foot-point offset determines how far below the bounding box bottom the "standing position" is assumed to be. A fixed 10px works for medium-distance cameras but fails for close-up or wide-angle views. The adaptive formula scales with the detected person's width.
 
-### 6. Event Selection Logic
+### 6. Event Merge + Selection Logic
 
 | | Before | After |
 |---|--------|-------|
-| **Strategy** | Longest event | Last event (`raw_start` maximum) |
-| **Problem** | KISA evaluates based on the most recent intrusion, not the longest |
-| **Impact** | Correct event timing for multi-intrusion videos |
+| **Merge** | No merge | Events with gap < 10s merged into one |
+| **Selection** | Longest event | Last merged event (`raw_start` maximum) |
+| **Problem** | Detection flicker created multiple short events; KISA evaluates the most recent intrusion, not the longest |
+| **Impact** | Correct event timing for multi-intrusion videos, robust to brief tracking gaps |
 
 ## Results at Each Step
 
@@ -112,9 +113,18 @@ FP16 (half precision) was tested for speed improvement but caused missed detecti
 | **Problem** | Strip mode used the foot tip as the crossing reference point. This triggered crossing detection ~2 seconds before the ground truth, because GT annotators mark the moment the person's body has crossed, not when the foot first touches the boundary |
 | **Impact** | C00_014_0002 improved from -2s (boundary) to ~0s (safe margin) |
 
-Strip ROIs are thin line/band regions where the person passes through in 1–4 seconds. Using the foot tip as reference detects the crossing at the very first moment of contact. Shifting the reference point to the lower body (20% up from bbox bottom) naturally delays detection proportionally to walking speed — fast crossers get less delay, slow crossers get more — matching human annotation behavior better than a fixed time offset.
+Strip ROIs are thin line/band regions where the person passes through in 1~4 seconds. Using the foot tip as reference detects the crossing at the very first moment of contact. Shifting the reference point to the lower body (20% up from bbox bottom) naturally delays detection proportionally to walking speed — fast crossers get less delay, slow crossers get more — matching human annotation behavior better than a fixed time offset.
 
 This change only affects strip mode (2/30 test videos). Area mode uses a separate code path and is completely unaffected.
+
+### 8. NoEvent False-Positive Prevention
+
+| | Before | After |
+|---|--------|-------|
+| **FORCE-CONFIRM streak** | 1 | 10 |
+| **SOFT-CONFIRM streak** | 3 | 10 |
+| **Problem** | Finalize logic generated false events on videos with no real intrusion — brief noise detections were enough to trigger event creation |
+| **Impact** | Eliminated false positives on empty (no-event) videos |
 
 ## Key Lessons
 

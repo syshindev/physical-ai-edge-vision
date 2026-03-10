@@ -147,9 +147,30 @@ When an intrusion event is confirmed, the system may recalculate the start time 
 | `MAX_SHIFT` (initial) | 20s (30s if ≤2 confirmed) | Max backward shift for start time |
 | `RECALC_MAX_SHIFT` | 8s (12s if roi_aspect > 3.5) | Max shift during recalculation |
 
+### Event Merge
+
+Events with gaps smaller than 10 seconds are merged into a single event. This handles detection flicker — when a person briefly leaves and re-enters the ROI (or tracking momentarily loses them), the system treats it as one continuous intrusion rather than multiple separate events.
+
+```
+Event A: 10s──20s    Event B: 25s──40s    (gap = 5s < 10s → merge)
+         └──────────────────────┘
+Merged:  10s──────────────────40s
+```
+
 ### Event Selection: Last Event Wins
 
-The system may detect multiple intrusion events in a single video (e.g., two different people entering at different times). The final output selects the **last event** (by `raw_start` time), matching KISA's evaluation criteria which judges based on the most recent intrusion.
+After merging, the system may still have multiple distinct intrusion events (e.g., two different people entering at different times). The final output selects the **last merged event** (by `raw_start` time), matching KISA's evaluation criteria which judges based on the most recent intrusion.
+
+### NoEvent False-Positive Prevention
+
+For videos where no real intrusion occurs, the finalize logic could still generate false events from brief noise detections. To prevent this, minimum streak thresholds are enforced:
+
+| Parameter | Before | After | Purpose |
+|-----------|--------|-------|---------|
+| FORCE-CONFIRM streak | 1 | 10 | Prevent single-frame noise from creating events |
+| SOFT-CONFIRM streak | 3 | 10 | Require sustained detection before confirming |
+
+These thresholds ensure that only genuine, sustained detections produce events during finalization.
 
 ## Multi-Person Handling
 

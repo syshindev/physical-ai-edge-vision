@@ -141,7 +141,7 @@ These had no TTL (time-to-live) or cleanup mechanism. Over a long video, stale e
 |--------|--------|------------|
 | Dev test (30 videos) | ~24/30 PASS | **30/30 PASS** |
 | KISA evaluation (150 videos) | Low 80s | **90+** |
-| Timing accuracy | ±5–15s typical | ±1–6s typical |
+| Timing accuracy | ±5~15s typical | ±1~6s typical |
 | Thin ROI support | No | Yes (auto-detected) |
 | Event merging | No | Yes (gap < 10s) |
 

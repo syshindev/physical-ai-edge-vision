@@ -19,7 +19,7 @@ The system processes live video feeds to detect persons collapsing or falling wi
         │
         ▼
 ┌────────────────┐
-│   YOLO 11x     │  Person detection (conf adaptive: 0.05~0.10)
+│   YOLO11x      │  Person detection (conf adaptive: 0.05~0.10)
 │   + BoTSORT    │  Tracking with ID stitching fallback
 └───────┬────────┘
         │  Tracked persons with bboxes

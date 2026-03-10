@@ -28,7 +28,7 @@ The core of the detection system is a per-track state machine with three states:
 | State | Meaning | Duration | Exit Condition |
 |-------|---------|----------|----------------|
 | **NORMAL** | No fall detected | — | EMA + evidence triggers SUSPECT |
-| **SUSPECT** | Potential fall, accumulating evidence | 0–5s+ | Confirmed after 5s, or reset if evidence fades |
+| **SUSPECT** | Potential fall, accumulating evidence | 0~5s+ | Confirmed after 5s, or reset if evidence fades |
 | **CONFIRMED** | Fall confirmed, event recorded | Hold 5s minimum | Stand/walk detected for 1.2s, or track lost > 6s |
 
 ### Why 3 States Instead of 2
@@ -89,7 +89,7 @@ stand_score = probs[4]
 walk_score = probs[5]
 ```
 
-Labels 1–3 are "transition" labels — they represent the act of falling. Label 0 represents the result (lying). By summing all four, the system captures:
+Labels 1~3 are "transition" labels — they represent the act of falling. Label 0 represents the result (lying). By summing all four, the system captures:
 - The initial collapse motion
 - Forward/backward falling direction
 - The final lying position
@@ -177,7 +177,7 @@ is_dark = (v_median < 105) or (v_p10 < 60) or (gray_mean < 95) or (gray_p10 < 55
 | Stage | Parameter | Day | Night |
 |-------|-----------|-----|-------|
 | 1. Preprocessing | Brightness | None | CLAHE + scale(1.15) + blur |
-| 2. Detection conf | `track_conf` | 0.10 | 0.05–0.06 |
+| 2. Detection conf | `track_conf` | 0.10 | 0.05~0.06 |
 | 3. Resolution | `track_imgsz` | 960 | 1280 |
 | 4. Entry threshold | `enter_thr` | 0.70 | 0.62 |
 | 5. Confirm gates | `shape_gate` AR | >= 1.35 | >= 1.10 |
@@ -204,7 +204,7 @@ The new track inherits all state (EMA, suspect timer, crops) from the old track.
 ### Layer 2: Fallback Detection
 For SUSPECT/CONFIRMED tracks that lost primary tracking:
 ```python
-# Crop region around last known bbox (padding 35-55%)
+# Crop region around last known bbox (padding 35~55%)
 roi_frame = frame[ry1:ry2, rx1:rx2]
 det = model.predict(roi_frame, conf=fallback_conf)
 # Filter by distance and area, apply box EMA to prevent jumps

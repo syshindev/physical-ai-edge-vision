@@ -16,9 +16,9 @@ Additionally, SUSPECT reset now requires `non_fall_count >= 3` consecutive non-f
 
 ## Issue 2: Tracker ID Loss During Occlusion
 
-**Problem**: When a person was briefly occluded (behind a pole, another person passing), BoT-SORT would lose the track and assign a new ID when the person reappeared. All accumulated fall evidence (EMA score, suspect timer, crop history) was tied to the old ID and effectively lost.
+**Problem**: When a person was briefly occluded (behind a pole, another person passing), BoTSORT would lose the track and assign a new ID when the person reappeared. All accumulated fall evidence (EMA score, suspect timer, crop history) was tied to the old ID and effectively lost.
 
-**Root Cause**: BoT-SORT's re-identification relies on appearance features and motion prediction. Brief occlusions break both — the person disappears from view and their predicted position drifts. When they reappear, the tracker sees them as a "new" person.
+**Root Cause**: BoTSORT's re-identification relies on appearance features and motion prediction. Brief occlusions break both — the person disappears from view and their predicted position drifts. When they reappear, the tracker sees them as a "new" person.
 
 **Solution**: Three-layer tracking recovery system:
 
@@ -43,7 +43,7 @@ Additionally, SUSPECT reset now requires `non_fall_count >= 3` consecutive non-f
 | Stage | Day | Night | Why |
 |-------|-----|-------|-----|
 | 1. Preprocessing | None | CLAHE + brightness(1.15) + blur | Enhance contrast before detection |
-| 2. Detection conf | 0.10 | 0.05–0.06 | Lower threshold to catch dim persons |
+| 2. Detection conf | 0.10 | 0.05~0.06 | Lower threshold to catch dim persons |
 | 3. Resolution | 960px | 1280px | More pixels for small/dark persons |
 | 4. Entry threshold | EMA >= 0.70 | EMA >= 0.62 | Accept weaker XCLIP signal in dark |
 | 5. Confirm gates | AR >= 1.35 | AR >= 1.10 | Relax shape requirements |
@@ -101,11 +101,11 @@ All internal timers (suspect duration, confirmed hold, stand exit, etc.) use `_c
 **Root Cause**: Fallback detection runs at lower confidence on a cropped region. The detection is noisier than primary tracking because:
 - Lower confidence threshold admits more uncertain detections
 - ROI cropping changes the spatial context the model sees
-- No temporal smoothing from the tracker (BoT-SORT not involved)
+- No temporal smoothing from the tracker (BoTSORT not involved)
 
 **Solution**: Two-stage filtering for fallback detections:
 
-1. **Distance + area filter**: Reject detections too far from previous box (> 120–260px depending on state) or with area ratio outside [0.45, 2.2]
+1. **Distance + area filter**: Reject detections too far from previous box (> 120~260px depending on state) or with area ratio outside [0.45, 2.2]
 2. **Box EMA smoothing**: Apply exponential moving average to box coordinates (alpha=0.65 for CONFIRMED, 0.70 for others) to prevent jumps
 
 ```python
@@ -118,7 +118,7 @@ box_ema[tid] = alpha * box_ema[tid] + (1 - alpha) * new_box
 
 **Problem**: In the first few seconds of video processing, YOLO would sometimes produce spurious detections (partial persons at frame edges, auto-exposure artifacts) that triggered SUSPECT state before the camera and model had stabilized.
 
-**Root Cause**: Many CCTV cameras perform auto-exposure and white balance adjustment in the first 2–5 seconds. The resulting brightness/contrast changes create temporary artifacts that look like person silhouettes to the detector. Additionally, the first few XCLIP classifications lack temporal context (sequence not yet full).
+**Root Cause**: Many CCTV cameras perform auto-exposure and white balance adjustment in the first 2~5 seconds. The resulting brightness/contrast changes create temporary artifacts that look like person silhouettes to the detector. Additionally, the first few XCLIP classifications lack temporal context (sequence not yet full).
 
 **Solution**: 5-second warmup period with conservative behavior:
 - Skip median/Gaussian blur during warmup (avoid spreading noise)

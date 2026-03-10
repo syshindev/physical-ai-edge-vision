@@ -11,7 +11,7 @@ I inherited a fall/collapse detection codebase from a previous developer. While 
 | **Lines of code** | ~720 | ~1,624 (2.25x) |
 | **Classes** | 3 (DeepSortTracker, XCLIPActionClassifier, SimpleFallingDetector) | 2 (XCLIPActionClassifier, CollapseMonitor) |
 | **Detection model** | Custom checkpoint + manual NMS | Ultralytics YOLO11x (integrated) |
-| **Tracker** | DeepSort (custom `nets.nn`) | BoT-SORT (built-in) + ID stitching fallback |
+| **Tracker** | DeepSort (custom `nets.nn`) | BoTSORT (built-in) + ID stitching fallback |
 | **Fall logic** | Frame counter + raw XCLIP score | 3-state machine + EMA + multi-evidence |
 | **Night handling** | None | 5-stage adaptive (brightness/conf/imgsz/threshold/gate) |
 | **Interface** | Standalone CLI (`process_video()`) | Emulator-integrated callback (`process_frame()`) |

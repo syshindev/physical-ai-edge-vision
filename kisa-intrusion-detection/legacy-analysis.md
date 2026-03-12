@@ -2,7 +2,7 @@
 
 ## Context
 
-I inherited an existing intrusion detection codebase from a previous developer. While functional, it scored in the **low 80s** on the KISA national evaluation (150 videos). Through systematic analysis, I identified fundamental architectural limitations and rebuilt the detection pipeline, ultimately achieving **90+ points**.
+I inherited an existing intrusion detection codebase from a previous developer. While functional, it scored in the **low 80s** on the KISA evaluation (150 videos). Through systematic analysis, I identified fundamental architectural limitations and rebuilt the detection pipeline, ultimately achieving **90+ points**.
 
 ## Legacy System Overview
 

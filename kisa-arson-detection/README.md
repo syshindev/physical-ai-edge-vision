@@ -1,6 +1,6 @@
 # Arson Detection System
 
-Fire and smoke detection for the KISA (Korea Internet & Security Agency) national CCTV surveillance evaluation program.
+Fire and smoke detection for the KISA (Korea Internet & Security Agency) CCTV surveillance evaluation program.
 
 ## Overview
 

@@ -14,18 +14,19 @@ Real-time fall/collapse detection for KISA video surveillance evaluation. Design
 **Key Work**: Algorithm design (3-state machine, EMA scoring, multi-evidence system), night mode pipeline, tracking recovery system
 
 ### [Arson Detection System](./kisa-arson-detection/)
-Fire/smoke detection system for KISA arson evaluation. Migrated the detection model from RT-DETR to D-FINE Nano, built the complete training pipeline (dataset conversion, server training, troubleshooting), and integrated the new model into the production system.
+Fire/smoke detection system for KISA arson evaluation. Migrated from RT-DETR to D-FINE Nano with 3-class separation (person/fire/smoke), designed a dynamic day/night threshold system to handle nighttime noise, and built the end-to-end training pipeline across 3 iterative rounds (24,000+ images). Achieved **10/10 PASS** on batch test.
 
-**Key Work**: Model migration (RT-DETR → D-FINE), training pipeline, CUDA/config troubleshooting
+**Key Work**: Model migration (RT-DETR → D-FINE), dynamic day/night thresholds, 3-round iterative training, gap-based event selection
 
 ## Key Achievements
 - **30/30 PASS** on KISA intrusion pre-test (30 sample videos, all within -2s ~ +10s tolerance)
 - **10/10 PASS** on KISA collapse pre-test with hybrid YOLO + X-CLIP pipeline
 - **80 → 90+** score improvement on main evaluation (150 videos) through systematic parameter tuning and algorithm redesign
 - Designed adaptive night mode pipeline for collapse detection (near-zero → daytime-level performance)
-- Successfully migrated arson detection from RT-DETR to D-FINE Nano with zero regression
+- **10/10 PASS** on arson batch test with dynamic day/night threshold system
+- Successfully migrated arson detection from RT-DETR to D-FINE Nano (3-class, 3-round training)
 - Built complete ML pipeline: frame extraction → annotation (CVAT) → dataset preparation → server training → evaluation
-- Resolved 6+ production issues (CUDA errors, config conflicts, score distribution bugs)
+- Resolved 9+ production issues (CUDA errors, nighttime noise, domain mismatch, config conflicts)
 - Designed and documented a reusable batch evaluation framework for rapid iteration
 
 ## Tech Stack

@@ -145,3 +145,23 @@ box_ema[tid] = alpha * box_ema[tid] + (1 - alpha) * new_box
 When a crop is rejected, the XCLIP result is `None` and the EMA decays at its state-dependent rate rather than being updated with noise. This preserves the existing score through brief periods of unreliable crops.
 
 **Result**: XCLIP only processes crops where its classification is meaningful, preventing noise injection into the EMA score.
+
+## Issue 9: FALLBACK Ghost Track False Positive (C00_235)
+
+**Problem**: C00_235 (night+snow video) produced a -68s false positive. A ghost track with ID -1010 reached CONFIRMED state and generated an early event, despite the "person" never being detected by YOLO's primary tracker.
+
+**Root Cause**: The FALLBACK detection system was designed to re-detect persons that the tracker temporarily lost — it crops the last known region and runs `model.predict()` at lower confidence. In noisy night+snow conditions, FALLBACK created entirely new tracks from background noise (conf=0.06~0.31). These tracks were never assigned a positive track ID by YOLO/BoTSORT, meaning they were pure noise that bypassed the primary detection pipeline's quality filters.
+
+The key distinction: normal FALLBACK re-detects a person that was previously tracked (has a real positive ID). This ghost track was never tracked — it existed only through repeated low-confidence FALLBACK detections on background noise.
+
+**Solution**: Added `_ever_real_tracked` set that records which track IDs have been assigned a positive ID by YOLO's tracker at least once. Before allowing any track to transition to CONFIRMED, the system checks whether the track was ever seen by the primary tracker:
+
+```python
+if track_id not in self._ever_real_tracked:
+    # Block CONFIRMED transition — this track was never real
+    return
+```
+
+This preserves FALLBACK's ability to re-detect legitimately lost persons (who were tracked before) while blocking entirely synthetic tracks.
+
+**Result**: C00_235 went from -68s FAIL to -0s PASS. Full batch maintained 10/10 PASS with no regressions on any other video. See [iteration-history.md](./iteration-history.md#4-fallback-ghost-track-fix--kept) for the broader context of this fix.

@@ -28,6 +28,7 @@ Fire/smoke detection system for KISA arson evaluation. Migrated from RT-DETR to 
 - Built complete ML pipeline: frame extraction → annotation (CVAT) → dataset preparation → server training → evaluation
 - Resolved 9+ production issues (CUDA errors, nighttime noise, domain mismatch, config conflicts)
 - Designed and documented a reusable batch evaluation framework for rapid iteration
+- All 3 detection strategies deployed to the DEXMA Watch production platform (D-FINE + ByteTrack + RTMPose)
 
 ## Tech Stack
 | Category | Technologies |

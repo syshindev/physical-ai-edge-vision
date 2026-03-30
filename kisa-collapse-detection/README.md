@@ -55,6 +55,7 @@ The system processes live video feeds to detect persons collapsing or falling wi
 - **Tracking Recovery**: Implemented ID stitching, fallback detection, and keepalive mechanisms to maintain detection continuity through occlusions. See [algorithm-design.md](./algorithm-design.md#tracking-recovery).
 - **Optimization Iterations**: Explored 3 major optimization paths (visual stabilization, YOLO fine-tuning, D-FINE+ByteTrack transition), analyzed failures, and made data-driven rollback decisions. See [iteration-history.md](./iteration-history.md).
 - **FALLBACK Ghost Track Fix**: Identified and fixed a FALLBACK-only false positive pattern on night+snow footage (C00_235). See [troubleshooting.md](./troubleshooting.md#issue-9-fallback-ghost-track-false-positive-c00_235).
+- **Production Deployment**: Deployed to DEXMA Watch platform as CollapseStrategy v3.0 (D-FINE + RTMPose-s hybrid, replacing XCLIP).
 
 ## Results
 

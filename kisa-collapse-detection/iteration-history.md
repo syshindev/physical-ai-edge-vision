@@ -156,7 +156,7 @@ This was the only optimization that improved results without introducing regress
 
 ---
 
-## Architecture Decision: XCLIP → RTMPose (Planned)
+## Architecture Decision: XCLIP → RTMPose
 
 ### Current State (KISA)
 
@@ -183,7 +183,7 @@ RTMPose fits the DEXMA architecture where D-FINE is the shared detector across a
 
 ### Status
 
-RTMPose transition is planned for the DEXMA CollapseStrategy. The KISA system remains on YOLO11x + XCLIP (10/10 PASS, no changes planned).
+RTMPose transition has been completed and deployed to the DEXMA Watch platform as CollapseStrategy v3.0 (D-FINE + RTMPose-s hybrid). The KISA system remains on YOLO11x + XCLIP (10/10 PASS, no changes planned).
 
 ---
 

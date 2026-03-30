@@ -95,6 +95,7 @@ The system automatically detects nighttime conditions and adjusts all thresholds
 - **Iterative Training**: 3 rounds of D-FINE training with incremental data augmentation (1st: domain mismatch failure, 2nd: 3-class success, 3rd: person data augmentation)
 - **Event Selection Logic**: Designed gap-based event selection to distinguish false-positive flicker from real fire events
 - **Troubleshooting**: Resolved production issues (CUDA errors, class ID conflicts, nighttime noise, camera water drops, D-FINE imgsz constraints)
+- **Production Deployment**: Deployed to DEXMA Watch platform as ArsonStrategy v3.0 (D-FINE Nano 3-class).
 
 ## Results
 

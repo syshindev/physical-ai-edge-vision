@@ -49,6 +49,7 @@ The system processes live video feeds to detect unauthorized persons entering re
 - **Data Pipeline**: Built frame extraction, auto-labeling, and dataset preparation tools for YOLO finetuning. See [finetuning-experiment.md](./finetuning-experiment.md).
 - **Evaluation Framework**: Created a batch evaluation script that runs all 30 test videos, compares against ground truth, and produces pass/fail reports. See [`batch_eval.py`](./scripts/batch_eval.py).
 - **Troubleshooting**: Diagnosed and fixed issues with thin ROI handling, boundary detection, and event timing. See [troubleshooting.md](./troubleshooting.md).
+- **Production Deployment**: Deployed to DEXMA Watch platform as IntrusionStrategy v3.0 (D-FINE + ByteTrack).
 
 ## Results
 

@@ -18,17 +18,23 @@ Fire/smoke detection system for KISA arson evaluation. Migrated from RT-DETR to 
 
 **Key Work**: Model migration (RT-DETR → D-FINE), dynamic day/night thresholds, 3-round iterative training, gap-based event selection
 
+### [Abandonment Detection System](./kisa-abandonment-detection/)
+Object abandonment detection for KISA surveillance evaluation. Designed a dual detection pipeline combining MOG2 background subtraction with frame difference (DIFF), featuring automatic day/night mode switching, person path heatmap filtering, and weighted average timing. Explored 10 approaches before achieving **10/10 PASS**.
+
+**Key Work**: Dual MOG2 + DIFF detection, day/night mode separation, person path heatmap, distance-based leave detection, 10 iterative approaches
+
 ## Key Achievements
 - **30/30 PASS** on KISA intrusion pre-test (30 sample videos, all within -2s ~ +10s tolerance)
 - **10/10 PASS** on KISA collapse pre-test with hybrid YOLO + X-CLIP pipeline
 - **80 → 90+** score improvement on main evaluation (150 videos) through systematic parameter tuning and algorithm redesign
 - Designed adaptive night mode pipeline for collapse detection (near-zero → daytime-level performance)
 - **10/10 PASS** on arson batch test with dynamic day/night threshold system
+- **10/10 PASS** on abandonment batch test with dual MOG2 + DIFF detection (10 approaches explored)
 - Successfully migrated arson detection from RT-DETR to D-FINE Nano (3-class, 3-round training)
 - Built complete ML pipeline: frame extraction → annotation (CVAT) → dataset preparation → server training → evaluation
 - Resolved 9+ production issues (CUDA errors, nighttime noise, domain mismatch, config conflicts)
 - Designed and documented a reusable batch evaluation framework for rapid iteration
-- All 3 detection strategies deployed to the DEXMA Watch production platform (D-FINE + ByteTrack + RTMPose)
+- All 4 detection strategies deployed to the DEXMA Watch production platform (D-FINE + ByteTrack + RTMPose + MOG2/DIFF)
 
 ## Tech Stack
 | Category | Technologies |

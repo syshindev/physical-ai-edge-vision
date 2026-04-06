@@ -193,6 +193,66 @@ Best of both worlds — natural visual transitions with accurate timing.
 
 ---
 
+## DEXMA Watch Platform Deployment
+
+### Porting Overview
+
+The KISA emulator's `abandonment.py` (v10.1) was ported to the DEXMA Watch platform as `AbandonmentStrategy`. The core detection logic (MOG2 + DIFF dual, day/night split, hysteresis, weighted average, distance-based leave) was preserved, with adjustments for the DEXMA architecture.
+
+Offline testing with 10 KISA videos: **10/10 detection success** (verified after 4 tuning passes).
+
+### Architecture Changes (KISA → DEXMA)
+
+| Component | KISA Emulator | DEXMA Watch |
+|-----------|--------------|-------------|
+| Person tracking | YOLO11x + BoTSORT | D-FINE (COCO) + ByteTrack |
+| Interface | `process_frame()` direct call | `EventStrategy.analyze()` inheritance |
+| Coordinate system | Pixel coordinates | Normalized 0~1 (zone), pixel internally for MOG2/DIFF |
+| Dependencies | ultralytics, logger_config | D-FINE, ByteTrack, loguru |
+
+### Preserved Logic (Identical)
+
+- MOG2 + DIFF dual detection
+- Day/night split (brightness threshold 100)
+- 30-frame hysteresis person confirmation
+- Weighted average (0.6 MOG2 + 0.4 DIFF)
+- 200px distance-based leave detection
+- Person path heatmap filtering
+
+### Parameter Adjustments
+
+| Parameter | KISA | DEXMA | Reason |
+|-----------|------|-------|--------|
+| `PERSON_MARGIN_PX` | 20 | 35 | D-FINE bboxes are tighter than YOLO — increased masking margin to prevent early SUSPECT triggers |
+| `DIFF_THRESHOLD` | 20 | 15 | Improved sensitivity for low-contrast objects (dark bags on dark ground) |
+| `MIN_OBJECT_AREA_MOG` | 150 | 80 | Register smaller blobs for gradual detection (prevents sudden confirmation) |
+| `PERSON_LEAVE_GRACE_SEC` | 0 (immediate) | 3s | D-FINE person detection flickers more than YOLO — 3s grace period before confirming person left |
+
+### New Logic (DEXMA Only)
+
+| Feature | Description |
+|---------|-------------|
+| `diff_preview` | Scans DIFF every 10 frames while person is present, pre-registering low-contrast objects that MOG2 misses as blobs |
+| `refine_iou_check` | After confirmation, bbox refinement only applies when new bbox overlaps existing by >= 15% IoU (prevents noise jumps) |
+| `person_leave_grace` | 3-second grace period before confirming person left — handles D-FINE detection flickering |
+| `fire_dets` separation | Fixed bug where COCO class 2 (car) was displayed as SMOKE in non-arson strategies |
+
+### Tuning History
+
+| Version | Changes | Result |
+|---------|---------|--------|
+| v1 | Direct port from KISA v10.1 | 10/10 detection, but car displayed as SMOKE |
+| v2 | MARGIN 35, DIFF_THR 15, fire_dets fix | 10/10, SMOKE bug resolved, early SUSPECT reduced |
+| v3 | MIN_AREA_MOG 80, diff_preview added | 10/10, C00_221 black bag detected 10s earlier |
+| v4 | Person leave grace 3s, refine IoU check | **10/10 final**, C00_230 bbox jump resolved |
+
+### Known Limitations
+
+- **C00_188 (daytime black bag)**: Low contrast between bag and ground causes slow MOG2 blob formation. Detection relies on DIFF-only confirmation, resulting in ~47s delay compared to GT. Detection itself is correct.
+- **sim_time epoch-based**: DEXMA's internal timestamp is epoch-based, making direct GT time comparison numerically inaccurate. Detection and visualization work correctly.
+
+---
+
 ## Legacy Code (Unused)
 
 The inherited codebase (`from_Gayrat/abandonment.py`) used YOWO v2 action recognition:

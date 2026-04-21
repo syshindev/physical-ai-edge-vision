@@ -47,7 +47,7 @@ detections = model.predict(frame)
 
 ### Step 3: Tracker Removal
 
-RT-DETR used BoTSORT tracking to maintain person IDs across frames. For arson detection, tracking is unnecessary — we only need to know if a person/fire exists in the current frame, not maintain identity across frames. Removing BoTSORT:
+RT-DETR used BoTSORT tracking to maintain person IDs across frames. For arson detection, tracking is unnecessary — only the current-frame presence of a person/fire is needed, not identity across frames. Removing BoTSORT:
 
 - Eliminated the `model.track()` call (replaced with `model.predict()`)
 - Removed BoTSORT predictor reset code
